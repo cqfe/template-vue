@@ -8,5 +8,5 @@ generateApi.default({
   // 输出api js文件路径
   outPut: resolve(process.cwd(), 'src/api/demoApi.js'),
   // 基础service路径，用作string写入模板
-  servicePath: '@/utils/request',
+  servicePath: "import { service } from '@/services/gateway'",
 })

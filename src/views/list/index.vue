@@ -66,9 +66,9 @@ import { DeleteOutlined, PlusOutlined } from '@ant-design/icons-vue'
 import { message } from 'ant-design-vue'
 import { computed, nextTick, reactive, ref } from 'vue'
 import { watchDebounced } from '@vueuse/core'
-import { demoDeleteBatch, demoList } from '@/api/list.js'
+import { demoDeleteBatch, demoList } from '@/api/demoApi.js'
 import { usePagination } from '@/hooks'
-import { DEMO_TYPE_OPTIONS } from '@/utils/dict.js'
+import { DEMO_TYPE_OPTIONS } from '@/constants/dict.js'
 
 defineOptions({ name: 'DemoList' })
 
