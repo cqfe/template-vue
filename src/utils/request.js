@@ -8,7 +8,7 @@ axios.defaults.headers['Content-Type'] = 'application/json;charset=utf-8'
 const service = axios.create({
   baseURL: import.meta.env.VITE_GLOB_API_URL,
   withCredentials: true,
-  timeout: 0
+  timeout: 0,
 })
 
 // Add a request interceptor
@@ -17,7 +17,7 @@ service.interceptors.request.use(
     const token = getToken() || '1'
     if (token) {
       config.headers['Access-Token'] = token
-      config.headers['Authorization'] = token
+      config.headers.Authorization = token
     }
     return config
   },
@@ -27,7 +27,7 @@ service.interceptors.request.use(
     }
     console.log(error) // for debug
     return Promise.reject(error)
-  }
+  },
 )
 
 // Add a response interceptor
@@ -41,7 +41,7 @@ service.interceptors.response.use(
       notification.open({
         message: res.message || '操作失败',
         type: 'error',
-        duration: 5 * 1000
+        duration: 5 * 1000,
       })
 
       return Promise.reject(new Error(res.message || 'Error'))
@@ -59,11 +59,10 @@ service.interceptors.response.use(
     }
     notification.error({
       message,
-      description: message === '操作失败' ? `相关接口：${error.config.url}` : undefined
+      description: message === '操作失败' ? `相关接口：${error.config.url}` : undefined,
     })
     return Promise.reject(error)
-  }
-
+  },
 )
 
 function blob2Json(blob) {
@@ -77,6 +76,5 @@ function blob2Json(blob) {
     fr.onerror = reject
   })
 }
-
 
 export default service

@@ -13,6 +13,6 @@ export function usePagination(listQuery, totalRef, options) {
     total: totalRef.value,
     showSizeChanger: true,
     showTotal: (total) => `共 ${total} 条`,
-    ...options
+    ...options,
   }))
 }

@@ -1,4 +1,3 @@
-import IconDemo from "@/components/SvgIcon/IconDemo.vue";
+import IconDemo from '@/components/SvgIcon/IconDemo.vue'
 
-
-export {IconDemo}
+export { IconDemo }

@@ -7,34 +7,34 @@ import { defineConfig } from 'vite'
 // https://vitejs.dev/config/
 export default defineConfig({
   define: {
-    __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: 'false'
+    __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: 'false',
   },
   plugins: [
     vue(),
     Components({
       resolvers: [
         AntDesignVueResolver({
-          importStyle: false // css in js
-        })
-      ]
-    })
+          importStyle: false, // css in js
+        }),
+      ],
+    }),
   ],
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url))
-    }
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
+    },
   },
   server: {
     host: '127.0.0.1',
     proxy: {
       '/demoServer': {
         target: 'http://127.0.0.1:8888', // 测试环境
-        changeOrigin: true
-      }
-    }
+        changeOrigin: true,
+      },
+    },
   },
   build: {
-    outDir: 'demo'
+    outDir: 'demo',
   },
-  base: '/demo'
+  base: '/demo',
 })

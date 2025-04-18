@@ -13,11 +13,11 @@ const router = createRouter({
         {
           path: '/list',
           name: 'List',
-          component: () => import('../views/list/index.vue')
-        }
-      ]
-    }
-  ]
+          component: () => import('../views/list/index.vue'),
+        },
+      ],
+    },
+  ],
 })
 
 export default router

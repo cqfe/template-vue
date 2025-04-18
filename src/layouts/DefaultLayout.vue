@@ -1,12 +1,12 @@
 <template>
   <main>
-    <RouterView/>
+    <RouterView />
   </main>
 </template>
 <script setup>
-import {defineComponent} from "vue";
+import { defineComponent } from 'vue'
 
-defineComponent({name: 'DefaultLayout'})
+defineComponent({ name: 'DefaultLayout' })
 </script>
 <style scoped lang="scss">
 main {

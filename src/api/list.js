@@ -8,7 +8,7 @@ export function demoList(data) {
   return request({
     url: '/demo/paging',
     method: 'post',
-    data
+    data,
   })
 }
 
@@ -20,7 +20,7 @@ export function demoAdd(data) {
   return request({
     url: '/demo/save',
     method: 'post',
-    data
+    data,
   })
 }
 
@@ -32,7 +32,7 @@ export function demoUpdate(data) {
   return request({
     url: '/demo/update',
     method: 'post',
-    data
+    data,
   })
 }
 
@@ -44,7 +44,6 @@ export function demoDeleteBatch(ids) {
   return request({
     url: '/demo/deleteBatch',
     method: 'post',
-    data: ids
+    data: ids,
   })
 }
-
