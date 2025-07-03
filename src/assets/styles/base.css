@@ -57,3 +57,26 @@ body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
+.search-container__left {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+
+    .input {
+        width: 200px;
+    }
+
+    .input-small {
+        width: 160px;
+    }
+
+    .input-tiny {
+        width: 120px;
+    }
+
+    & > .ant-select:not(.ant-tree-select) {
+        min-width: 150px;
+    }
+}
