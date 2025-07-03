@@ -2,6 +2,7 @@
   "git.ignoreLimitWarning": true,
   "eslint.enable": true,
   "eslint.format.enable": true,
+  "typescript.validate.enable": false,
   "[javascript]": {
     "editor.defaultFormatter": "dbaeumer.vscode-eslint"
   },

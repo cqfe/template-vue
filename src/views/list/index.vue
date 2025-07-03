@@ -16,9 +16,7 @@
       <div class="search-container__right">
         <a-button type="primary" :disabled="!selectedRowKeys.length"> 选择示例 </a-button>
         <a-button type="primary">
-          <template #icon>
-            <PlusOutlined />
-          </template>
+          <template #icon><PlusOutlined /> </template>
           新建示例
         </a-button>
         <a-popconfirm
@@ -28,9 +26,7 @@
           @confirm="handleDelete"
         >
           <a-button type="primary" :loading="deleting" danger :disabled="!selectedRowKeys.length">
-            <template #icon>
-              <DeleteOutlined />
-            </template>
+            <template #icon><DeleteOutlined /> </template>
             删除示例
           </a-button>
         </a-popconfirm>
