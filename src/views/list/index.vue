@@ -1,96 +1,61 @@
 <template>
   <a-card class="pageWrapper">
-    <div class="search-container">
-      <div class="search-container__left">
-        <a-input v-model:value="listQuery.query.demoName" class="input" placeholder="示例名称" allow-clear></a-input>
-        <a-select
-          v-model:value="listQuery.query.demoType"
-          class="input"
-          :options="DEMO_TYPE_OPTIONS"
-          placeholder="示例类型"
-          allow-clear
-        ></a-select>
-        <a-button @click="resetQuery()">重置</a-button>
-        <a-button type="primary" @click="fetchData(true)">查询</a-button>
-      </div>
-      <div class="search-container__right">
-        <a-button type="primary" :disabled="!selectedRowKeys.length"> 选择示例 </a-button>
-        <a-button type="primary">
-          <template #icon><PlusOutlined /> </template>
-          新建示例
-        </a-button>
-        <a-popconfirm
-          placement="bottomLeft"
-          :disabled="deleting || !selectedRowKeys.length"
-          :title="`确定要删除已选 ${selectedRowKeys.length} 项吗？`"
-          @confirm="handleDelete"
-        >
-          <a-button type="primary" :loading="deleting" danger :disabled="!selectedRowKeys.length">
-            <template #icon><DeleteOutlined /> </template>
-            删除示例
-          </a-button>
-        </a-popconfirm>
-      </div>
-    </div>
+    <TableSearch v-model:value="listQuery" :fields="fields" @reset="onReset" @search="fetchData">
+      <template #handle>
+        <a-button type="primary"> 新建 </a-button>
+      </template>
+    </TableSearch>
     <a-table
       row-key="id"
-      :data-source="list"
+      :data-source="dataSource"
       :loading="loading"
-      :columns="columns"
+      :columns="TABLE_DEMO_COLUMNS"
       :row-selection="rowSelection"
       :pagination="pagination"
-      @change="tableChange"
+      @change="onTableChange"
     >
       <template #bodyCell="{ record, column, index }">
-        <template v-if="column.dataIndex === 'order'"
-          >{{ (listQuery.current - 1) * listQuery.size + index + 1 }}
+        <template v-if="column.dataIndex === 'order'">
+          {{ (pagination.current - 1) * pagination.pageSize + index + 1 }}
         </template>
-        <div v-if="column.dataIndex === 'operate'" class="tableOperate">
+        <a-flex v-if="column.dataIndex === 'operate'">
           <a-button size="small" type="link">修改</a-button>
-          <a-divider type="vertical" />
-          <a-popconfirm title="确定删除吗？" @confirm="handleDelete(record.id)">
+          <a-popconfirm title="确定删除吗？" @confirm="onDel(record.id)">
             <a-button size="small" type="link" danger>删除</a-button>
           </a-popconfirm>
-        </div>
+        </a-flex>
       </template>
     </a-table>
   </a-card>
 </template>
 
 <script setup>
-import { DeleteOutlined, PlusOutlined } from '@ant-design/icons-vue'
 import { message } from 'ant-design-vue'
-import { computed, nextTick, reactive, ref } from 'vue'
-import { watchDebounced } from '@vueuse/core'
-import { demoDeleteBatch, demoList } from '@/api/demoApi.js'
-import { usePagination } from '@/hooks'
-import { DEMO_TYPE_OPTIONS } from '@/constants/dict.js'
+import { computed, nextTick, onMounted, reactive, ref } from 'vue'
+import { deletePetPetId } from '@/api/demoApi.js'
+import { DEMO_TYPE_OPTIONS } from '@/constants/options.js'
+import TableSearch from '@/components/TableSearch/index.vue'
+import { usePaginationReq } from '@/hooks/usePaginationReq'
+import { TABLE_DEMO_COLUMNS } from '@/constants/columns'
 
 defineOptions({ name: 'DemoList' })
 
-const loading = ref(true)
-const deleting = ref(false)
-const list = ref()
-const listQuery = reactive({
-  current: 1,
-  size: 10,
-  query: {
-    demoName: '',
-    demoType: undefined,
+// table相关数据和方法,>>>>替换模拟响应为列表请求函数
+const { dataSource, loading, pagination, fetchList, resetPage } = usePaginationReq(async () => ({
+  data: {
+    total: 10,
+    current: 1,
+    records: [{ id: 1 }],
   },
+}))
+// table查询表单值
+const listQuery = reactive({
+  demoName: '',
+  demoType: undefined,
 })
-const total = ref(0)
-const pagination = usePagination(listQuery, total)
-const columns = [
-  { title: '序号', key: 'order', dataIndex: 'order', width: 80 },
-  { title: '示例名称', key: 'demoName', dataIndex: 'demoName' },
-  { title: '示例类型', key: 'demoType', dataIndex: 'demoType' },
-  { title: '创建时间', key: 'createTime', dataIndex: 'createTime' },
-  { title: '修改时间', key: 'updateTime', dataIndex: 'updateTime' },
-  { title: '操作', key: 'operate', dataIndex: 'operate', width: 220 },
-]
+// 选中数据key
 const selectedRowKeys = ref([])
-
+// 选中数据
 const rowSelection = computed(() => {
   return {
     selectedRowKeys: selectedRowKeys.value,
@@ -99,59 +64,48 @@ const rowSelection = computed(() => {
     },
   }
 })
-
+// table查询表单配置
+const fields = computed(() => [
+  { name: 'demoName', type: 'input', placeholder: '请输入名称' },
+  { name: 'demoType', type: 'select', placeholder: '请选择类型', options: DEMO_TYPE_OPTIONS },
+])
 function fetchData(isRefresh) {
-  if (isRefresh) listQuery.current = 1
-  loading.value = true
-  demoList(listQuery)
-    .then((res) => {
-      list.value = res.data.records
-      total.value = res.data.total
-    })
-    .finally(() => {
-      nextTick(() => {
-        loading.value = false
-      })
-    })
+  console.debug('fetchData Query:', listQuery)
+  if (isRefresh) pagination.current = 1
+  fetchList(listQuery)
 }
-
-function resetQuery() {
-  listQuery.query.demoName = ''
-  listQuery.query.demoType = undefined
-  fetchData(true)
-}
-
-function tableChange(pagination) {
-  listQuery.current = pagination.current
-  listQuery.size = pagination.pageSize
-  fetchData()
-}
-
-function handleDelete(id) {
-  deleting.value = true
-  loading.value = true
-  demoDeleteBatch(id ? [id] : selectedRowKeys.value)
-    .then(() => {
-      message.success('删除成功')
-      fetchData(true)
-    })
-    .catch(() => {
-      loading.value = false
-    })
-    .finally(() => {
-      deleting.value = false
-    })
-}
-
-watchDebounced(
-  () => listQuery.query.demoName,
-  () => {
+// table搜索
+function onSearch() {
+  resetPage()
+  nextTick(() => {
     fetchData(true)
-  },
-  { debounce: 500 },
-)
-
-fetchData()
+  })
+}
+// 重置查询
+function onReset() {
+  Object.keys(listQuery).forEach((key) => {
+    listQuery[key] = undefined
+  })
+  onSearch()
+}
+// 表单查询条件改变
+function onTableChange(page) {
+  if (page.current) changePage(page, false)
+  nextTick(() => {
+    fetchData()
+  })
+}
+// 删除数据
+function onDel(id) {
+  deletePetPetId(id ? [id] : selectedRowKeys.value).then(() => {
+    message.success('删除成功')
+    fetchData(true)
+  })
+}
+// 初始化请求列表
+onMounted(() => {
+  fetchData()
+})
 </script>
 
 <style scoped lang="scss"></style>
