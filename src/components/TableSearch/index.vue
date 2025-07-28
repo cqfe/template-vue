@@ -26,7 +26,7 @@
 
 <script setup>
 import { Input, Select, TreeSelect, DatePicker, RangePicker, InputNumber } from 'ant-design-vue'
-import { useSlots, ref, onMounted } from 'vue'
+import { useSlots } from 'vue'
 
 const props = defineProps({
   // 搜索字段
@@ -44,8 +44,6 @@ const props = defineProps({
     default: false,
   },
 })
-const searchColumn = ref(4)
-// const expand = ref(props.defaultExpand || false)
 const slots = useSlots()
 const emit = defineEmits(['reset', 'search'])
 // 双向绑定值
@@ -81,21 +79,6 @@ function isRenderItem(item) {
   )
   return isExist
 }
-
-onMounted(() => {
-  const dom = document.getElementsByClassName('field-container')?.[0]
-  if (!dom) return
-  searchColumn.value =
-    dom.clientWidth >= 1300
-      ? 5
-      : dom.clientWidth >= 1000
-        ? 4
-        : dom.clientWidth >= 800
-          ? 3
-          : dom.clientWidth >= 600
-            ? 2
-            : 1
-})
 </script>
 
 <style scoped lang="scss">
