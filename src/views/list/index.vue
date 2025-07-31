@@ -41,7 +41,7 @@ import { TABLE_DEMO_COLUMNS } from '@/constants/columns'
 defineOptions({ name: 'DemoList' })
 
 // table相关数据和方法,>>>>替换模拟响应为列表请求函数
-const { dataSource, loading, pagination, fetchList, resetPage } = usePaginationReq(async () => ({
+const { dataSource, loading, pagination, fetchList, resetPage, changePage } = usePaginationReq(async () => ({
   data: {
     total: 10,
     current: 1,
